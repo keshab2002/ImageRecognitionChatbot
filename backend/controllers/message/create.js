@@ -1,136 +1,70 @@
 import Chat from "#models/Chat.Model.js";
 import Message from "#models/Message.Model.js";
+import { getGeminiResponse } from "#utils/getGeminiResponse.js";
 
 /**
  * @swagger
- *   /api/message:
- *     post:
- *       summary: Create a new message in a chat
- *       tags:
- *         - Message
- *       requestBody:
- *         required: true
+ * /api/message:
+ *   post:
+ *     summary: Create a new message in a chat and generate a Gemini AI response
+ *     tags:
+ *       - Message
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - chatId
+ *             properties:
+ *               chatId:
+ *                 type: string
+ *                 description: The ID of the chat to which the message belongs
+ *               content:
+ *                 type: string
+ *                 description: The textual content of the message (optional if imageUrl is provided)
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: The URL of the image to include in the message (optional if content is provided)
+ *     responses:
+ *       201:
+ *         description: Message created successfully and added to chat
  *         content:
  *           application/json:
  *             schema:
  *               type: object
- *               required:
- *                 - chatId
- *                 - role
  *               properties:
- *                 chatId:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 timestamp:
  *                   type: string
- *                   description: ID of the chat to send the message to
- *                   example: "661fe2a6f854ee2ac8752f33"
- *                 role:
+ *                   format: date-time
+ *                 message:
  *                   type: string
- *                   description: Role of the message sender (e.g., user or admin)
- *                   example: "user"
- *                 content:
- *                   type: string
- *                   description: Text content of the message
- *                   example: "How can I help you?"
- *                 imageUrl:
- *                   type: string
- *                   description: Optional image URL attached to the message
- *                   example: "https://example.com/image.jpg"
- *       responses:
- *         "201":
- *           description: Message created and added to chat
- *           content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 properties:
- *                   success:
- *                     type: boolean
- *                     example: true
- *                   timestamp:
- *                     type: string
- *                     format: date-time
- *                   message:
- *                     type: string
- *                     example: Message created and added to chat
- *                   data:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: "661fe2a6f854ee2ac8752f33"
- *                       role:
- *                         type: string
- *                         example: "user"
- *                       content:
- *                         type: string
- *                         example: "How can I help you?"
- *                       imageUrl:
- *                         type: string
- *                         example: "https://example.com/image.jpg"
- *         "400":
- *           description: Missing chatId or role
- *           content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 properties:
- *                   success:
- *                     type: boolean
- *                     example: false
- *                   timestamp:
- *                     type: string
- *                     format: date-time
- *                   message:
- *                     type: string
- *                     example: Failed to create message
- *                   error:
- *                     type: string
- *                     example: chatId and role are required
- *         "404":
- *           description: Chat not found
- *           content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 properties:
- *                   success:
- *                     type: boolean
- *                     example: false
- *                   timestamp:
- *                     type: string
- *                     format: date-time
- *                   message:
- *                     type: string
- *                     example: Failed to create message
- *                   error:
- *                     type: string
- *                     example: Chat not found
- *         "500":
- *           description: Server error
- *           content:
- *             application/json:
- *               schema:
- *                 type: object
- *                 properties:
- *                   success:
- *                     type: boolean
- *                     example: false
- *                   timestamp:
- *                     type: string
- *                     format: date-time
- *                   message:
- *                     type: string
- *                     example: Failed to create message
- *                   error:
- *                     type: string
- *                     example: Internal Server Error
- * */
+ *                   example: Message created and added to chat
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     text:
+ *                       type: string
+ *                       description: The response generated by Gemini
+ *       400:
+ *         description: Bad request, missing required fields
+ *       404:
+ *         description: Chat not found
+ *       500:
+ *         description: Internal server error or Gemini API failure
+ */
 
 export const createMessage = async (req, res) => {
   try {
-    const { chatId, role, content, imageUrl } = req.body;
+    const { chatId, content, imageUrl } = req.body;
 
-    if (!chatId || !role) {
-      throw { status: 400, message: "chatId and role are required" };
+    if (!chatId) {
+      throw { status: 400, message: "chatId is required" };
     }
 
     if (!content && !imageUrl) {
@@ -142,11 +76,20 @@ export const createMessage = async (req, res) => {
       throw { status: 404, message: "Chat not found" };
     }
 
-    // 1. Create a new message with content or imageUrl
-    const message = new Message({ role, content, imageUrl });
+    //1. Create a new message with content or imageUrl
+    const message = new Message({ content, imageUrl });
+
+    //2. Return Gemini Reponse
+    const geminiResponse = await getGeminiResponse(content, imageUrl);
+    if (geminiResponse.error) {
+      throw { status: 500, message: geminiResponse.error };
+    }
+
+    //3. Add Gemini response to message and save
+    message.geminiResponse = geminiResponse.text;
     await message.save();
 
-    // 2. Add message to chat and save
+    //4. Add message to chat and save
     chat.messages.push(message._id);
     await chat.save();
 
@@ -154,7 +97,7 @@ export const createMessage = async (req, res) => {
       success: true,
       timestamp: new Date().toISOString(),
       message: "Message created and added to chat",
-      data: message,
+      data: geminiResponse,
     });
   } catch (err) {
     console.error("Error creating message:", err);
