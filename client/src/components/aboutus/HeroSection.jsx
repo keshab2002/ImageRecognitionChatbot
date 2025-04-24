@@ -3,7 +3,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <div className="relative py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div className="mt-16 relative py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
       <div className="absolute inset-0 bg-[#0F172A] z-0">
         <div
           className="absolute inset-0 opacity-20"
