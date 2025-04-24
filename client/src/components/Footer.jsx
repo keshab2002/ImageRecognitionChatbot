@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
-              PixelMind
+              PixelMide
             </span>
             <p className="text-gray-400 text-base">
               The future of image recognition and analysis, powered by advanced AI.

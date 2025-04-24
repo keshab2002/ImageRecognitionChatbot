@@ -1,9 +1,9 @@
 import React from 'react';
-import Message from '../chat/Message';
+import MessageBubble from '../chat/Messages.jsx'; // Renamed to avoid confusion
 
 const HeroSection = ({
   onSignupClick,
-  messages,
+  chatMessages = [], // ✅ Renamed from 'Messages'
   inputMessage,
   onInputChange,
   onSendMessage,
@@ -21,8 +21,10 @@ const HeroSection = ({
         />
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent"></div>
       </div>
+
       <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
         <div className="flex justify-between items-start">
+          {/* Left Side Content */}
           <div className="md:w-1/2">
             <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Unlock the Power of{" "}
@@ -50,6 +52,8 @@ const HeroSection = ({
               </a>
             </div>
           </div>
+
+          {/* ===== Chat Section Starts Here (right side in Hero) ===== */}
           <div className="hidden md:block md:w-1/2 ml-8">
             <div className="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
               <div className="flex items-center justify-between mb-4">
@@ -60,9 +64,11 @@ const HeroSection = ({
                   Online
                 </span>
               </div>
+
+              {/* ==== Chat messages container starts ==== */}
               <div className="h-80 overflow-y-auto mb-4 space-y-4">
-                {messages.map((message, index) => (
-                  <Message
+                {chatMessages.map((message, index) => (
+                  <MessageBubble
                     key={index}
                     text={message.text}
                     sender={message.sender}
@@ -70,6 +76,9 @@ const HeroSection = ({
                   />
                 ))}
               </div>
+              {/* ==== Chat messages container ends ==== */}
+
+              {/* ==== Input section starts ==== */}
               <div className="relative flex items-center space-x-2">
                 <input
                   type="text"
@@ -96,6 +105,8 @@ const HeroSection = ({
                   <i className="fas fa-paper-plane"></i>
                 </button>
               </div>
+              {/* ==== Input section ends ==== */}
+
               <p className="mt-2 text-sm text-gray-400">
                 {remainingQuestions > 0
                   ? `${remainingQuestions} questions remaining before signup required`
@@ -103,6 +114,7 @@ const HeroSection = ({
               </p>
             </div>
           </div>
+          {/* ===== Chat Section Ends Here ===== */}
         </div>
       </div>
     </div>
