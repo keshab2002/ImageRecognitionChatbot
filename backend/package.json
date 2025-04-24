@@ -1,0 +1,76 @@
+{
+  "name": "dept-project",
+  "version": "1.0.0",
+  "description": "Repo for Backend of Image Object Detetction in Dept Comp.",
+  "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#utils/*": "./utils/*",
+    "#config/*": "./config/*",
+    "#controllers/*": "./controllers/*",
+    "#routes/*": "./routes/*",
+    "#commands/*": "./commands/*",
+    "#middlewares/*": "./middlewares/*",
+    "#models/*": "./models/*"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "*.json",
+      "*.csv",
+      "*.pdf",
+      "*.jpeg",
+      "*.jpg",
+      "*.png",
+      "*.gif",
+      "*.mp4",
+      "*.avi",
+      "*.mov",
+      "*.mkv",
+      "*.webm",
+      "*.wmv",
+      "*.flv",
+      "*.m4v",
+      "*.mp3",
+      "*.wav",
+      "*.ogg",
+      "*.flac",
+      "*.aac"
+    ],
+    "events": {
+      "restart": "cls"
+    }
+  },
+  "scripts": {
+    "start": "node --trace-warnings index.js",
+    "build": "npm i",
+    "dev": "cls && nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keshab2002/ImageRecognitionChatbot.git"
+  },
+  "author": "Manmohan Khandelwal, Keshab Dey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keshab2002/ImageRecognitionChatbot/issues"
+  },
+  "homepage": "https://github.com/keshab2002/ImageRecognitionChatbot#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "cloudinary": "^2.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
+    "fs": "^0.0.1-security",
+    "mongoose": "^8.13.2",
+    "path": "^0.12.7",
+    "url": "^0.11.4",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
