@@ -112,9 +112,14 @@ export const createChat = async (req, res) => {
     const newChat = await Chat.create({ title });
 
     // 2. Add the chat to the user’s chat list
-    await User.findByIdAndUpdate(userId, {
-      $push: { chats: newChat._id },
-    });
+    await User.findOneAndUpdate(
+      {
+        userId: userId,
+      },
+      {
+        $push: { chats: newChat._id },
+      }
+    );
 
     res.status(201).json({
       success: true,

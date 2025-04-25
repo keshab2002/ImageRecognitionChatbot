@@ -113,7 +113,7 @@ export const readChat = async (req, res) => {
     if (!chatId) throw { status: 400, message: "chatId is required" };
 
     // 1. Find the chat by chatId
-    const chat = await Chat.findById(chatId);
+    const chat = await Chat.findById(chatId).populate("messages"); // Assuming messages is a reference to another model
 
     if (!chat) throw { status: 404, message: "Chat not found" };
 

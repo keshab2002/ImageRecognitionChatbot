@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    role: {
-      type: String,
-      enum: ["user", "assistant"],
-      required: true,
-    },
     content: { type: String }, // optional text
     imageUrl: { type: String }, // optional image
+    geminiResponse: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

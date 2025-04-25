@@ -114,6 +114,7 @@ export const getMessagesByChat = async (req, res) => {
     if (!chatId) {
       throw { status: 400, message: "chatId is required" };
     }
+    console.log("Fetching messages for chatId:", chatId);
 
     const chat = await Chat.findById(chatId).populate("messages");
     if (!chat) {

@@ -135,11 +135,7 @@ export const updateChatTitle = async (req, res) => {
       success: true,
       timestamp: new Date().toISOString(),
       message: "Chat title updated successfully",
-      chat: {
-        _id: chat._id,
-        title: chat.title,
-        messages: chat.messages,
-      },
+      data: chat,
     });
   } catch (err) {
     console.error("Error updating chat title:", err);

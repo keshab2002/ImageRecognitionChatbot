@@ -128,9 +128,12 @@ export const deleteChat = async (req, res) => {
       };
     }
     // 1. Remove the chat from the user's chat list
-    await User.findByIdAndUpdate(userId, {
-      $pull: { chats: chatId },
-    });
+    await User.findOneAndUpdate(
+      { userId },
+      {
+        $pull: { chats: chatId },
+      }
+    );
 
     // 2. Fetch the chat to get message IDs
     const chat = await Chat.findById(chatId);
